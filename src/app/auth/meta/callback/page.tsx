@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 
 export default function MetaCallbackPage() {
-  const searchParams = useSearchParams();
-
   useEffect(() => {
-    const code = searchParams.get("code");
+    const params = new URLSearchParams(window.location.search);
+
+    const code = params.get("code");
 
     if (!code) return;
 
@@ -27,7 +26,7 @@ export default function MetaCallbackPage() {
       .catch((err) => {
         console.error("Meta callback error:", err);
       });
-  }, [searchParams]);
+  }, []);
 
   return <div>Connecting Instagram...</div>;
 }
