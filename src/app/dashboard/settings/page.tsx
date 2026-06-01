@@ -3,13 +3,39 @@
 import { useEffect, useState } from "react";
 
 export default function SettingsPage() {
-  const [brandName, setBrandName] = useState<string | null>(null);
-  const [igId, setIgId] = useState<string | null>(null);
+  const [brand, setBrand] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setBrandName(localStorage.getItem("brand_name"));
-    setIgId(localStorage.getItem("instagram_business_id"));
-  }, []);
+  const fetchBrand = async () => {
+    try {
+      const response = await fetch(
+        "https://socailautoposterbackend-production.up.railway.app/brands/me",
+        {
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.length > 0) {
+        setBrand(data[0]);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  fetchBrand();
+}, []);
 
   const connectInstagram = () => {
     window.location.href =
@@ -17,12 +43,10 @@ export default function SettingsPage() {
   };
 
   const disconnect = () => {
-    localStorage.removeItem("brand_id");
-    localStorage.removeItem("brand_name");
-    localStorage.removeItem("instagram_business_id");
-    setBrandName(null);
-    setIgId(null);
-  };
+  alert(
+    "Disconnect API will be implemented next"
+  );
+};
 
   return (
     <div className="p-6 max-w-xl">
@@ -34,13 +58,13 @@ export default function SettingsPage() {
           Connect your Instagram Business account via Facebook
         </p>
 
-        {brandName ? (
+        {brand ? (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
             <p className="text-sm font-semibold text-green-700">✅ Connected</p>
-            <p className="text-sm text-green-700 mt-1">Page: {brandName}</p>
-            {igId && (
+            <p className="text-sm text-green-700 mt-1">Page: {brand}</p>
+            {brand.instagram_business_id && (
               <p className="text-xs text-green-600 mt-0.5">
-                Instagram ID: {igId}
+                Instagram ID: {brand.instagram_business_id}
               </p>
             )}
           </div>
@@ -55,10 +79,10 @@ export default function SettingsPage() {
             onClick={connectInstagram}
             className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
           >
-            {brandName ? "Reconnect" : "Connect Instagram"}
+            {brand ? "Reconnect" : "Connect Instagram"}
           </button>
 
-          {brandName && (
+          {brand && (
             <button
               onClick={disconnect}
               className="border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
