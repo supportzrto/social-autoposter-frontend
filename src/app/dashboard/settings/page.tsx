@@ -7,46 +7,69 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchBrand = async () => {
-    try {
-      const response = await fetch(
-        "https://socailautoposterbackend-production.up.railway.app/auth/brands/me",
-        {
-          credentials: "include",
+    const fetchBrand = async () => {
+      try {
+        const response = await fetch(
+          "https://socailautoposterbackend-production.up.railway.app/auth/brands/me",
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          setLoading(false);
+          return;
         }
-      );
 
-      if (!response.ok) {
+        const data = await response.json();
+
+        if (data.length > 0) {
+          setBrand(data[0]);
+        }
+
         setLoading(false);
-        return;
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
       }
+    };
 
-      const data = await response.json();
-
-      if (data.length > 0) {
-        setBrand(data[0]);
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
-
-  fetchBrand();
-}, []);
+    fetchBrand();
+  }, []);
 
   const connectInstagram = () => {
     window.location.href =
       "https://socailautoposterbackend-production.up.railway.app/auth/meta/login";
   };
 
-  const disconnect = () => {
-  alert(
-    "Disconnect API will be implemented next"
-  );
-};
+  const disconnect = async () => {
+
+    if (!brand) return;
+
+    const confirmed = window.confirm(
+      "Disconnect Instagram account?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+
+      const response = await fetch(
+        `https://socailautoposterbackend-production.up.railway.app/auth/brands/${brand.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        setBrand(null);
+      }
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="p-6 max-w-xl">
