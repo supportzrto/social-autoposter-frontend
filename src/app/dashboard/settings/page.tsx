@@ -10,7 +10,7 @@ export default function SettingsPage() {
   const fetchBrand = async () => {
     try {
       const response = await fetch(
-        "https://socailautoposterbackend-production.up.railway.app/brands/me",
+        "https://socailautoposterbackend-production.up.railway.app/auth/brands/me",
         {
           credentials: "include",
         }
@@ -61,7 +61,7 @@ export default function SettingsPage() {
         {brand ? (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
             <p className="text-sm font-semibold text-green-700">✅ Connected</p>
-            <p className="text-sm text-green-700 mt-1">Page: {brand}</p>
+            <p className="text-sm text-green-700 mt-1">Page: {brand.name}</p>
             {brand.instagram_business_id && (
               <p className="text-xs text-green-600 mt-0.5">
                 Instagram ID: {brand.instagram_business_id}
