@@ -1,18 +1,33 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function MetaCallbackPage() {
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+  const searchParams = useSearchParams();
 
-    const code = params.get("code");
+  useEffect(() => {
+    const code = searchParams.get("code");
 
     if (!code) return;
 
-    window.location.href =
-      `https://socailautoposterbackend-production.up.railway.app/auth/meta/callback?code=${code}`;
-  }, []);
+    fetch(
+      `https://socailautoposterbackend-production.up.railway.app/auth/meta/callback?code=${code}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        localStorage.setItem(
+          "meta_data",
+          JSON.stringify(data)
+        );
+
+        window.location.href =
+          "/dashboard/settings?connected=true";
+      })
+      .catch((err) => {
+        console.error("Meta callback error:", err);
+      });
+  }, [searchParams]);
 
   return <div>Connecting Instagram...</div>;
 }
