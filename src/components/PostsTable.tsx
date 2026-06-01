@@ -110,8 +110,11 @@ export default function PostsTable() {
 
             try {
 
+                const API_URL =
+                    'https://socailautoposterbackend-production.up.railway.app';
+
                 const response = await fetch(
-                    'http://127.0.0.1:8000/posts'
+                    `${API_URL}/posts`
                 );
 
                 const data =
@@ -437,22 +440,22 @@ export default function PostsTable() {
                                         className="px-4 py-3
                     text-sm text-gray-600"
                                     >
-                                    
-{new Date(
-    post.schedule_time.replace(
-        ' ',
-        'T'
-    )
-).toLocaleString(
-    'en-US',
-    {
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-    }
-)}
+
+                                        {new Date(
+                                            post.schedule_time.replace(
+                                                ' ',
+                                                'T'
+                                            )
+                                        ).toLocaleString(
+                                            'en-US',
+                                            {
+                                                month: 'short',
+                                                day: '2-digit',
+                                                year: 'numeric',
+                                                hour: 'numeric',
+                                                minute: '2-digit',
+                                            }
+                                        )}
 
 
                                     </td>
