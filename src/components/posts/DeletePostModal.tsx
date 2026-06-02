@@ -1,22 +1,19 @@
 'use client';
 
 import { Trash2, X } from 'lucide-react';
-
-import { Post } from '@/app/constants/mockPosts';
-
 import { toast } from 'sonner';
 
 type Props = {
-    post: Post | null;
+    post: any;
 
     open: boolean;
 
     onClose: () => void;
 
-    posts: Post[];
+    posts: any[];
 
     setPosts: React.Dispatch<
-        React.SetStateAction<Post[]>
+        React.SetStateAction<any[]>
     >;
 };
 
@@ -27,57 +24,105 @@ export default function DeletePostModal({
     posts,
     setPosts,
 }: Props) {
+
     if (!open || !post) return null;
 
-    const handleDelete = () => {
+    const API_URL =
+        "https://socailautoposterbackend-production.up.railway.app";
 
-        const updatedPosts =
-            posts.filter(
-                (item) => item.id !== post.id
+    const handleDelete = async () => {
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/posts/${post.id}`,
+                {
+                    method: "DELETE",
+
+                    credentials: "include",
+                }
             );
 
-        setPosts(updatedPosts);
+            const data =
+                await response.json();
 
-        toast.success(
-            'Post deleted successfully'
-        );
+            if (!response.ok) {
 
-        onClose();
+                toast.error(
+                    data.detail ||
+                    "Failed to delete post"
+                );
+
+                return;
+            }
+
+            const updatedPosts =
+                posts.filter(
+                    (item) =>
+                        item.id !== post.id
+                );
+
+            setPosts(updatedPosts);
+
+            toast.success(
+                "Post deleted successfully"
+            );
+
+            onClose();
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error(
+                "Something went wrong"
+            );
+        }
     };
 
     return (
         <div
-            className="fixed inset-0 z-50
-      flex items-center justify-center
-      bg-black/40 backdrop-blur-sm p-4"
+            className="
+            fixed inset-0 z-50
+            flex items-center justify-center
+            bg-black/40 backdrop-blur-sm
+            p-4
+            "
         >
 
             <div
-                className="w-full max-w-md
-        bg-white rounded-2xl
-        shadow-2xl overflow-hidden"
+                className="
+                w-full max-w-md
+                bg-white rounded-2xl
+                shadow-2xl overflow-hidden
+                "
             >
 
-                {/* Header */}
                 <div
-                    className="flex items-center
-          justify-between px-6 py-4
-          border-b border-gray-100"
+                    className="
+                    flex items-center justify-between
+                    px-6 py-4
+                    border-b border-gray-100
+                    "
                 >
 
                     <h2
-                        className="text-lg font-semibold
-            text-gray-900"
+                        className="
+                        text-lg font-semibold
+                        text-gray-900
+                        "
                     >
                         Delete Post
                     </h2>
 
                     <button
                         onClick={onClose}
-                        className="w-9 h-9 rounded-lg
-            border border-gray-200
-            flex items-center justify-center
-            hover:bg-gray-100"
+                        className="
+                        w-9 h-9 rounded-lg
+                        border border-gray-200
+                        flex items-center justify-center
+                        hover:bg-gray-100
+                        "
                     >
 
                         <X
@@ -89,13 +134,15 @@ export default function DeletePostModal({
 
                 </div>
 
-                {/* Body */}
                 <div className="p-6">
 
                     <div
-                        className="w-14 h-14 rounded-full
-            bg-red-50 flex items-center
-            justify-center mx-auto"
+                        className="
+                        w-14 h-14 rounded-full
+                        bg-red-50
+                        flex items-center justify-center
+                        mx-auto
+                        "
                     >
 
                         <Trash2
@@ -105,18 +152,27 @@ export default function DeletePostModal({
 
                     </div>
 
-                    <div className="text-center mt-4">
+                    <div
+                        className="
+                        text-center
+                        mt-4
+                        "
+                    >
 
                         <h3
-                            className="text-lg font-semibold
-              text-gray-900"
+                            className="
+                            text-lg font-semibold
+                            text-gray-900
+                            "
                         >
                             Delete this post?
                         </h3>
 
                         <p
-                            className="text-sm text-gray-500
-              mt-2 leading-relaxed"
+                            className="
+                            text-sm text-gray-500
+                            mt-2 leading-relaxed
+                            "
                         >
                             This action cannot be undone.
                             The selected post will be
@@ -125,26 +181,32 @@ export default function DeletePostModal({
 
                     </div>
 
-                    {/* Footer */}
                     <div
-                        className="flex justify-center
-            gap-3 mt-6"
+                        className="
+                        flex justify-center
+                        gap-3 mt-6
+                        "
                     >
 
                         <button
                             onClick={onClose}
-                            className="h-11 px-5 rounded-xl
-              border border-gray-200
-              text-gray-600 hover:bg-gray-50"
+                            className="
+                            h-11 px-5 rounded-xl
+                            border border-gray-200
+                            text-gray-600
+                            hover:bg-gray-50
+                            "
                         >
                             Cancel
                         </button>
 
                         <button
                             onClick={handleDelete}
-                            className="h-11 px-5 rounded-xl
-              bg-red-600 text-white
-              hover:bg-red-700"
+                            className="
+                            h-11 px-5 rounded-xl
+                            bg-red-600 text-white
+                            hover:bg-red-700
+                            "
                         >
                             Delete Post
                         </button>
