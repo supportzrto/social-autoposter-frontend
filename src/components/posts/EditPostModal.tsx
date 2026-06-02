@@ -1,359 +1,270 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { toast } from "sonner";
 
 type Props = {
-    post: any;
-    open: boolean;
-    onClose: () => void;
+  post: any;
+  open: boolean;
+  onClose: () => void;
 
-    posts: any[];
+  posts: any[];
 
-    setPosts: React.Dispatch<
-        React.SetStateAction<any[]>
-    >;
+  setPosts: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 export default function EditPostModal({
-    post,
-    open,
-    onClose,
+  post,
+  open,
+  onClose,
 
-    posts,
-    setPosts,
+  posts,
+  setPosts,
 }: Props) {
+  const API_URL = "https://socailautoposterbackend-production.up.railway.app";
 
-    const API_URL =
-        "https://socailautoposterbackend-production.up.railway.app";
+  const [title, setTitle] = useState("");
 
-    const [title, setTitle] =
-        useState('');
+  const [caption, setCaption] = useState("");
 
-    const [caption, setCaption] =
-        useState('');
+  const [status, setStatus] = useState("PENDING");
 
-    const [status, setStatus] =
-        useState('PENDING');
+  const [scheduleTime, setScheduleTime] = useState("");
 
-    const [scheduleTime, setScheduleTime] =
-        useState('');
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title || "");
 
-    useEffect(() => {
+      setCaption(post.caption || "");
 
-        if (post) {
+      setStatus(post.status || "PENDING");
 
-            setTitle(post.title || '');
+      setScheduleTime(
+        post.schedule_time ? post.schedule_time.slice(0, 16) : "",
+      );
+    }
+  }, [post]);
 
-            setCaption(post.caption || '');
+  if (!open || !post) return null;
 
-            setStatus(
-                post.status || 'PENDING'
-            );
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`${API_URL}/posts/${post.id}`, {
+        method: "PUT",
 
-            setScheduleTime(
-                post.schedule_time
-                    ? post.schedule_time.slice(0, 16)
-                    : ''
-            );
-        }
+        credentials: "include",
 
-    }, [post]);
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-    if (!open || !post) return null;
+        body: JSON.stringify({
+          title,
+          caption,
 
-    const handleSave = async () => {
+          media_urls: post.media_urls,
 
-        try {
+          media_type: post.media_type,
 
-            const response = await fetch(
-                `${API_URL}/posts/${post.id}`,
-                {
-                    method: 'PUT',
+          platforms: post.platforms,
 
-                    credentials: 'include',
+          schedule_time: new Date(scheduleTime).toISOString(),
 
-                    headers: {
-                        'Content-Type':
-                            'application/json',
-                    },
+          status,
+        }),
+      });
 
-                    body: JSON.stringify({
-                        title,
-                        caption,
+      const data = await response.json();
 
-                        media_urls:
-                            post.media_urls,
+      if (!response.ok) {
+        toast.error(data.detail || "Failed to update post");
 
-                        media_type:
-                            post.media_type,
+        return;
+      }
 
-                        platforms:
-                            post.platforms,
+      const updatedPosts = posts.map((item) =>
+        item.id === post.id ? data : item,
+      );
 
-                        schedule_time:
-                            scheduleTime,
+      setPosts(updatedPosts);
 
-                        status,
-                    }),
-                }
-            );
+      toast.success("Post updated successfully");
 
-            const data =
-                await response.json();
+      onClose();
+    } catch (error) {
+      console.error(error);
 
-            if (!response.ok) {
+      toast.error("Something went wrong");
+    }
+  };
 
-                toast.error(
-                    data.detail ||
-                    'Failed to update post'
-                );
-
-                return;
-            }
-
-            const updatedPosts =
-                posts.map((item) =>
-
-                    item.id === post.id
-                        ? data
-                        : item
-                );
-
-            setPosts(updatedPosts);
-
-            toast.success(
-                'Post updated successfully'
-            );
-
-            onClose();
-
-        } catch (error) {
-
-            console.error(error);
-
-            toast.error(
-                'Something went wrong'
-            );
-        }
-    };
-
-    return (
-        <div
-            className="
+  return (
+    <div
+      className="
             fixed inset-0 z-50
             flex items-center justify-center
             bg-black/40 backdrop-blur-sm p-4
             "
-        >
-
-            <div
-                className="
+    >
+      <div
+        className="
                 w-full max-w-2xl
                 bg-white rounded-2xl
                 shadow-2xl overflow-hidden
                 "
-            >
-
-                <div
-                    className="
+      >
+        <div
+          className="
                     flex items-center justify-between
                     px-6 py-4
                     border-b border-gray-100
                     "
-                >
-
-                    <div>
-
-                        <h2
-                            className="
+        >
+          <div>
+            <h2
+              className="
                             text-xl font-semibold
                             text-gray-900
                             "
-                        >
-                            Edit Post
-                        </h2>
+            >
+              Edit Post
+            </h2>
 
-                        <p
-                            className="
+            <p
+              className="
                             text-sm text-gray-500 mt-1
                             "
-                        >
-                            Update post details
-                        </p>
+            >
+              Update post details
+            </p>
+          </div>
 
-                    </div>
-
-                    <button
-                        onClick={onClose}
-                        className="
+          <button
+            onClick={onClose}
+            className="
                         w-9 h-9 rounded-lg
                         border border-gray-200
                         flex items-center justify-center
                         hover:bg-gray-100
                         "
-                    >
+          >
+            <X size={16} className="text-gray-500" />
+          </button>
+        </div>
 
-                        <X
-                            size={16}
-                            className="text-gray-500"
-                        />
-
-                    </button>
-
-                </div>
-
-                <div className="p-6 space-y-5">
-
-                    <div>
-
-                        <label
-                            className="
+        <div className="p-6 space-y-5">
+          <div>
+            <label
+              className="
                             text-sm text-gray-500
                             "
-                        >
-                            Title
-                        </label>
+            >
+              Title
+            </label>
 
-                        <input
-                            value={title}
-                            onChange={(e) =>
-                                setTitle(
-                                    e.target.value
-                                )
-                            }
-                            className="
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="
                             w-full h-11 px-4 mt-1
                             rounded-xl border border-gray-200
                             "
-                        />
+            />
+          </div>
 
-                    </div>
-
-                    <div>
-
-                        <label
-                            className="
+          <div>
+            <label
+              className="
                             text-sm text-gray-500
                             "
-                        >
-                            Caption
-                        </label>
+            >
+              Caption
+            </label>
 
-                        <textarea
-                            value={caption}
-                            onChange={(e) =>
-                                setCaption(
-                                    e.target.value
-                                )
-                            }
-                            rows={4}
-                            className="
+            <textarea
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              rows={4}
+              className="
                             w-full p-4 mt-1
                             rounded-xl border border-gray-200
                             "
-                        />
+            />
+          </div>
 
-                    </div>
-
-                    <div>
-
-                        <label
-                            className="
+          <div>
+            <label
+              className="
                             text-sm text-gray-500
                             "
-                        >
-                            Status
-                        </label>
+            >
+              Status
+            </label>
 
-                        <select
-                            value={status}
-                            onChange={(e) =>
-                                setStatus(
-                                    e.target.value
-                                )
-                            }
-                            className="
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="
                             w-full h-11 px-4 mt-1
                             rounded-xl border border-gray-200
                             "
-                        >
+            >
+              <option value="PENDING">PENDING</option>
 
-                            <option value="PENDING">
-                                PENDING
-                            </option>
+              <option value="PUBLISHED">PUBLISHED</option>
 
-                            <option value="PUBLISHED">
-                                PUBLISHED
-                            </option>
+              <option value="FAILED">FAILED</option>
+            </select>
+          </div>
 
-                            <option value="FAILED">
-                                FAILED
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <div>
-
-                        <label
-                            className="
+          <div>
+            <label
+              className="
                             text-sm text-gray-500
                             "
-                        >
-                            Schedule Time
-                        </label>
+            >
+              Schedule Time
+            </label>
 
-                        <input
-                            type="datetime-local"
-                            value={scheduleTime}
-                            onChange={(e) =>
-                                setScheduleTime(
-                                    e.target.value
-                                )
-                            }
-                            className="
+            <input
+              type="datetime-local"
+              value={scheduleTime}
+              onChange={(e) => setScheduleTime(e.target.value)}
+              className="
                             w-full h-11 px-4 mt-1
                             rounded-xl border border-gray-200
                             "
-                        />
+            />
+          </div>
 
-                    </div>
-
-                    <div
-                        className="
+          <div
+            className="
                         flex justify-end gap-3 pt-3
                         "
-                    >
-
-                        <button
-                            onClick={onClose}
-                            className="
+          >
+            <button
+              onClick={onClose}
+              className="
                             h-11 px-5 rounded-xl
                             border border-gray-200
                             "
-                        >
-                            Cancel
-                        </button>
+            >
+              Cancel
+            </button>
 
-                        <button
-                            onClick={handleSave}
-                            className="
+            <button
+              onClick={handleSave}
+              className="
                             h-11 px-5 rounded-xl
                             bg-indigo-600 text-white
                             "
-                        >
-                            Save Changes
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            >
+              Save Changes
+            </button>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
