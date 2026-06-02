@@ -4,258 +4,275 @@ import { useEffect, useState } from "react";
 
 export default function CreatePostPage() {
 
-  const API_URL =
-    "https://socailautoposterbackend-production.up.railway.app";
+    const API_URL =
+        "https://socailautoposterbackend-production.up.railway.app";
 
-  const [title, setTitle] = useState("");
+    const [title, setTitle] = useState("");
 
-  const [caption, setCaption] = useState("");
+    const [caption, setCaption] = useState("");
 
-  const [scheduleTime, setScheduleTime] =
-    useState("");
+    const [scheduleTime, setScheduleTime] =
+        useState("");
 
-  const [media, setMedia] = useState<any[]>([]);
+    const [media, setMedia] = useState<any[]>([]);
 
-  const [selectedMedia, setSelectedMedia] =
-    useState<string[]>([]);
 
-  const fetchMedia = async () => {
 
-    const response = await fetch(
-      `${API_URL}/media`,
-      {
-        credentials: "include",
-      }
-    );
+    const [selectedMedia, setSelectedMedia] =
+        useState<string[]>([]);
 
-    const data = await response.json();
 
-    setMedia(data);
-  };
 
-  useEffect(() => {
-    fetchMedia();
-  }, []);
+    const fetchMedia = async () => {
 
-  const toggleMedia = (url: string) => {
-
-    setSelectedMedia((prev) => {
-
-      if (prev.includes(url)) {
-
-        return prev.filter(
-          (item) => item !== url
+        const response = await fetch(
+            `${API_URL}/media`,
+            {
+                credentials: "include",
+            }
         );
-      }
 
-      return [...prev, url];
-    });
-  };
+        const data = await response.json();
 
-  const createPost = async () => {
+        setMedia(data);
+    };
 
-    if (!title) {
-      alert("Title required");
-      return;
-    }
+    useEffect(() => {
+        fetchMedia();
+    }, []);
 
-    if (
-      selectedMedia.length === 0
-    ) {
-      alert(
-        "Select at least one media"
-      );
-      return;
-    }
+    const toggleMedia = (url: string) => {
 
-    const response = await fetch(
-      `${API_URL}/posts`,
-      {
-        method: "POST",
+        setSelectedMedia((prev) => {
 
-        credentials: "include",
+            if (prev.includes(url)) {
 
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
+                return prev.filter(
+                    (item) => item !== url
+                );
+            }
 
-        body: JSON.stringify({
-          title,
-          caption,
+            return [...prev, url];
+        });
+    };
 
-          media_urls:
-            selectedMedia,
+    const createPost = async () => {
 
-          media_type:
-            selectedMedia.length > 1
-              ? "CAROUSEL"
-              : "IMAGE",
+        if (!title.trim()) {
+            alert("Title required");
+            return;
+        }
 
-          platforms: [
-            "INSTAGRAM",
-          ],
+        if (selectedMedia.length === 0) {
+            alert("Select at least one media");
+            return;
+        }
 
-          schedule_time:
-            scheduleTime,
+        if (!scheduleTime) {
+            alert("Select schedule time");
+            return;
+        }
 
-          status: "PENDING",
-        }),
-      }
-    );
+        const payload = {
+            title,
+            caption,
+            media_urls: selectedMedia,
+            media_type:
+                selectedMedia.length > 1
+                    ? "CAROUSEL"
+                    : "IMAGE",
+            platforms: ["INSTAGRAM"],
+            schedule_time: scheduleTime,
+            status: "PENDING",
+        };
 
-    if (response.ok) {
+        console.log("PAYLOAD:", payload);
 
-      alert(
-        "Post created successfully"
-      );
+        try {
 
-      setTitle("");
-      setCaption("");
-      setScheduleTime("");
-      setSelectedMedia([]);
-    }
-  };
+            const response = await fetch(
+                `${API_URL}/posts`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
 
-  return (
-    <div className="p-6 max-w-6xl">
+            const data = await response.json();
 
-      <h1 className="text-2xl font-bold mb-6">
-        Create Post
-      </h1>
+            console.log("STATUS:", response.status);
+            console.log("RESPONSE:", data);
 
-      <div className="space-y-4">
+            if (!response.ok) {
 
-        <input
-          value={title}
-          onChange={(e) =>
-            setTitle(e.target.value)
-          }
-          placeholder="Title"
-          className="
+                alert(
+                    JSON.stringify(
+                        data,
+                        null,
+                        2
+                    )
+                );
+
+                return;
+            }
+
+            alert("Post created successfully");
+
+            setTitle("");
+            setCaption("");
+            setScheduleTime("");
+            setSelectedMedia([]);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Something went wrong");
+        }
+    };
+
+    return (
+        <div className="p-6 max-w-6xl">
+
+            <h1 className="text-2xl font-bold mb-6">
+                Create Post
+            </h1>
+
+            <div className="space-y-4">
+
+                <input
+                    value={title}
+                    onChange={(e) =>
+                        setTitle(e.target.value)
+                    }
+                    placeholder="Title"
+                    className="
           w-full
           border
           rounded-lg
           p-3
           "
-        />
+                />
 
-        <textarea
-          value={caption}
-          onChange={(e) =>
-            setCaption(
-              e.target.value
-            )
-          }
-          placeholder="Caption"
-          rows={5}
-          className="
+                <textarea
+                    value={caption}
+                    onChange={(e) =>
+                        setCaption(
+                            e.target.value
+                        )
+                    }
+                    placeholder="Caption"
+                    rows={5}
+                    className="
           w-full
           border
           rounded-lg
           p-3
           "
-        />
+                />
 
-        <input
-          type="datetime-local"
-          value={scheduleTime}
-          onChange={(e) =>
-            setScheduleTime(
-              e.target.value
-            )
-          }
-          className="
+                <input
+                    type="datetime-local"
+                    value={scheduleTime}
+                    onChange={(e) =>
+                        setScheduleTime(
+                            e.target.value
+                        )
+                    }
+                    className="
           border
           rounded-lg
           p-3
           "
-        />
+                />
 
-      </div>
+            </div>
 
-      <h2
-        className="
+            <h2
+                className="
         mt-8 mb-4
         text-lg
         font-semibold
         "
-      >
-        Select Media
-      </h2>
+            >
+                Select Media
+            </h2>
 
-      <div
-        className="
+            <div
+                className="
         grid
         grid-cols-2
         md:grid-cols-4
         gap-4
         "
-      >
+            >
 
-        {media.map((item) => (
+                {media.map((item) => (
 
-          <div
-            key={item.id}
-            onClick={() =>
-              toggleMedia(
-                item.url
-              )
-            }
-            className={`
+                    <div
+                        key={item.id}
+                        onClick={() =>
+                            toggleMedia(
+                                item.url
+                            )
+                        }
+                        className={`
               border
               rounded-lg
               overflow-hidden
               cursor-pointer
 
-              ${
-                selectedMedia.includes(
-                  item.url
-                )
-                  ? "ring-4 ring-indigo-500"
-                  : ""
-              }
+              ${selectedMedia.includes(
+                            item.url
+                        )
+                                ? "ring-4 ring-indigo-500"
+                                : ""
+                            }
             `}
-          >
+                    >
 
-            {item.resource_type ===
-            "image" ? (
+                        {item.resource_type ===
+                            "image" ? (
 
-              <img
-                src={item.url}
-                alt=""
-                className="
+                            <img
+                                src={item.url}
+                                alt=""
+                                className="
                 w-full
                 h-40
                 object-cover
                 "
-              />
+                            />
 
-            ) : (
+                        ) : (
 
-              <video
-                className="
+                            <video
+                                className="
                 w-full
                 h-40
                 object-cover
                 "
-              >
-                <source
-                  src={item.url}
-                />
-              </video>
+                            >
+                                <source
+                                    src={item.url}
+                                />
+                            </video>
 
-            )}
+                        )}
 
-          </div>
+                    </div>
 
-        ))}
+                ))}
 
-      </div>
+            </div>
 
-      <button
-        onClick={createPost}
-        className="
+            <button
+                onClick={createPost}
+                className="
         mt-8
         bg-indigo-600
         text-white
@@ -264,10 +281,10 @@ export default function CreatePostPage() {
         rounded-lg
         font-medium
         "
-      >
-        Create Post
-      </button>
+            >
+                Create Post
+            </button>
 
-    </div>
-  );
+        </div>
+    );
 }
