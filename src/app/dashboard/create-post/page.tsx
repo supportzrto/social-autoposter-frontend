@@ -3,276 +3,215 @@
 import { useEffect, useState } from "react";
 
 export default function CreatePostPage() {
+  const API_URL = "https://socailautoposterbackend-production.up.railway.app";
 
-    const API_URL =
-        "https://socailautoposterbackend-production.up.railway.app";
+  const [title, setTitle] = useState("");
 
-    const [title, setTitle] = useState("");
+  const [caption, setCaption] = useState("");
 
-    const [caption, setCaption] = useState("");
+  const [scheduleTime, setScheduleTime] = useState("");
 
-    const [scheduleTime, setScheduleTime] =
-        useState("");
+  const [media, setMedia] = useState<any[]>([]);
 
-    const [media, setMedia] = useState<any[]>([]);
+  const [selectedMedia, setSelectedMedia] = useState<any[]>([]);
 
+  const fetchMedia = async () => {
+    const response = await fetch(`${API_URL}/media`, {
+      credentials: "include",
+    });
 
+    const data = await response.json();
 
-    const [selectedMedia, setSelectedMedia] =
-        useState<string[]>([]);
+    setMedia(data);
+  };
 
+  useEffect(() => {
+    fetchMedia();
+  }, []);
 
+  const toggleMedia = (item: any) => {
+    setSelectedMedia((prev) => {
+      const exists = prev.find((m) => m.id === item.id);
 
-    const fetchMedia = async () => {
+      if (exists) {
+        return prev.filter((m) => m.id !== item.id);
+      }
 
-        const response = await fetch(
-            `${API_URL}/media`,
-            {
-                credentials: "include",
-            }
-        );
+      return [...prev, item];
+    });
+  };
 
-        const data = await response.json();
+  const createPost = async () => {
+    if (!title.trim()) {
+      alert("Title required");
+      return;
+    }
 
-        setMedia(data);
+    if (selectedMedia.length === 0) {
+      alert("Select at least one media");
+      return;
+    }
+
+    if (!scheduleTime) {
+      alert("Select schedule time");
+      return;
+    }
+
+    const payload = {
+      title,
+      caption,
+      media_urls: selectedMedia.map((item) => item.url),
+
+      media_type:
+        selectedMedia.length > 1
+          ? "CAROUSEL"
+          : selectedMedia[0]?.resource_type?.toUpperCase(),
+      platforms: ["INSTAGRAM"],
+      schedule_time: scheduleTime,
+      status: "PENDING",
     };
 
-    useEffect(() => {
-        fetchMedia();
-    }, []);
+    console.log("PAYLOAD:", payload);
 
-    const toggleMedia = (url: string) => {
+    try {
+      const response = await fetch(`${API_URL}/posts`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-        setSelectedMedia((prev) => {
+      const data = await response.json();
 
-            if (prev.includes(url)) {
+      console.log("STATUS:", response.status);
+      console.log("RESPONSE:", data);
 
-                return prev.filter(
-                    (item) => item !== url
-                );
-            }
+      if (!response.ok) {
+        alert(JSON.stringify(data, null, 2));
 
-            return [...prev, url];
-        });
-    };
+        return;
+      }
 
-    const createPost = async () => {
+      alert("Post created successfully");
 
-        if (!title.trim()) {
-            alert("Title required");
-            return;
-        }
+      setTitle("");
+      setCaption("");
+      setScheduleTime("");
+      setSelectedMedia([]);
+    } catch (error) {
+      console.error(error);
 
-        if (selectedMedia.length === 0) {
-            alert("Select at least one media");
-            return;
-        }
+      alert("Something went wrong");
+    }
+  };
 
-        if (!scheduleTime) {
-            alert("Select schedule time");
-            return;
-        }
+  return (
+    <div className="p-6 max-w-6xl">
+      <h1 className="text-2xl font-bold mb-6">Create Post</h1>
 
-        const payload = {
-            title,
-            caption,
-            media_urls: selectedMedia,
-            media_type:
-                selectedMedia.length > 1
-                    ? "CAROUSEL"
-                    : "IMAGE",
-            platforms: ["INSTAGRAM"],
-            schedule_time: scheduleTime,
-            status: "PENDING",
-        };
-
-        console.log("PAYLOAD:", payload);
-
-        try {
-
-            const response = await fetch(
-                `${API_URL}/posts`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(payload),
-                }
-            );
-
-            const data = await response.json();
-
-            console.log("STATUS:", response.status);
-            console.log("RESPONSE:", data);
-
-            if (!response.ok) {
-
-                alert(
-                    JSON.stringify(
-                        data,
-                        null,
-                        2
-                    )
-                );
-
-                return;
-            }
-
-            alert("Post created successfully");
-
-            setTitle("");
-            setCaption("");
-            setScheduleTime("");
-            setSelectedMedia([]);
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("Something went wrong");
-        }
-    };
-
-    return (
-        <div className="p-6 max-w-6xl">
-
-            <h1 className="text-2xl font-bold mb-6">
-                Create Post
-            </h1>
-
-            <div className="space-y-4">
-
-                <input
-                    value={title}
-                    onChange={(e) =>
-                        setTitle(e.target.value)
-                    }
-                    placeholder="Title"
-                    className="
+      <div className="space-y-4">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          className="
           w-full
           border
           rounded-lg
           p-3
           "
-                />
+        />
 
-                <textarea
-                    value={caption}
-                    onChange={(e) =>
-                        setCaption(
-                            e.target.value
-                        )
-                    }
-                    placeholder="Caption"
-                    rows={5}
-                    className="
+        <textarea
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          placeholder="Caption"
+          rows={5}
+          className="
           w-full
           border
           rounded-lg
           p-3
           "
-                />
+        />
 
-                <input
-                    type="datetime-local"
-                    value={scheduleTime}
-                    onChange={(e) =>
-                        setScheduleTime(
-                            e.target.value
-                        )
-                    }
-                    className="
+        <input
+          type="datetime-local"
+          value={scheduleTime}
+          onChange={(e) => setScheduleTime(e.target.value)}
+          className="
           border
           rounded-lg
           p-3
           "
-                />
+        />
+      </div>
 
-            </div>
-
-            <h2
-                className="
+      <h2
+        className="
         mt-8 mb-4
         text-lg
         font-semibold
         "
-            >
-                Select Media
-            </h2>
+      >
+        Select Media
+      </h2>
 
-            <div
-                className="
+      <div
+        className="
         grid
         grid-cols-2
         md:grid-cols-4
         gap-4
         "
-            >
-
-                {media.map((item) => (
-
-                    <div
-                        key={item.id}
-                        onClick={() =>
-                            toggleMedia(
-                                item.url
-                            )
-                        }
-                        className={`
+      >
+        {media.map((item) => (
+          <div
+            key={item.id}
+            onClick={() => toggleMedia(item)}
+            className={`
               border
               rounded-lg
               overflow-hidden
               cursor-pointer
 
-              ${selectedMedia.includes(
-                            item.url
-                        )
-                                ? "ring-4 ring-indigo-500"
-                                : ""
-                            }
+              ${
+                selectedMedia.some((media) => media.id === item.id)
+                  ? "ring-4 ring-indigo-500"
+                  : ""
+              }
             `}
-                    >
-
-                        {item.resource_type ===
-                            "image" ? (
-
-                            <img
-                                src={item.url}
-                                alt=""
-                                className="
-                w-full
-                h-40
-                object-cover
-                "
-                            />
-
-                        ) : (
-
-                            <video
-                                className="
-                w-full
-                h-40
-                object-cover
-                "
-                            >
-                                <source
-                                    src={item.url}
-                                />
-                            </video>
-
-                        )}
-
-                    </div>
-
-                ))}
-
-            </div>
-
-            <button
-                onClick={createPost}
+          >
+            {item.resource_type === "image" ? (
+              <img
+                src={item.url}
+                alt=""
                 className="
+                w-full
+                h-40
+                object-cover
+                "
+              />
+            ) : (
+              <video
+                className="
+                w-full
+                h-40
+                object-cover
+                "
+              >
+                <source src={item.url} />
+              </video>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={createPost}
+        className="
         mt-8
         bg-indigo-600
         text-white
@@ -281,10 +220,9 @@ export default function CreatePostPage() {
         rounded-lg
         font-medium
         "
-            >
-                Create Post
-            </button>
-
-        </div>
-    );
+      >
+        Create Post
+      </button>
+    </div>
+  );
 }
