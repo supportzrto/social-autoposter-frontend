@@ -33,6 +33,12 @@ const nav = [
   },
 
   {
+    href: "/dashboard/create-post",
+    icon: CalendarClock,
+    label: "Create Post",
+  },
+
+  {
     href: '/dashboard/posts',
     icon: CalendarClock,
     label: 'All Posts',
