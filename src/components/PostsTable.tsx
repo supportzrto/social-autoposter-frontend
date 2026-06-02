@@ -114,22 +114,47 @@ export default function PostsTable() {
                     'https://socailautoposterbackend-production.up.railway.app';
 
                 const response = await fetch(
-                    `${API_URL}/posts`
+                    `${API_URL}/posts`,
+                    {
+                        credentials: "include",
+                    }
                 );
 
-                const data =
-                    await response.json();
+                if (!response.ok) {
 
-                setPosts(data);
+                    console.error(
+                        "Failed to fetch posts:",
+                        response.status
+                    );
+
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+
+                    setPosts(data);
+
+                } else {
+
+                    console.error(
+                        "Expected array but got:",
+                        data
+                    );
+
+                }
 
             } catch (error) {
 
                 console.log(
-                    'Error fetching posts:',
+                    "Error fetching posts:",
                     error
                 );
+
             }
         };
+
 
         fetchPosts();
 
