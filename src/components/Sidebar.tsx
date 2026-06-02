@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 import { clsx } from 'clsx';
@@ -35,6 +36,12 @@ const nav = [
     href: '/dashboard/posts',
     icon: CalendarClock,
     label: 'All Posts',
+  },
+
+  {
+    href: "/dashboard/media",
+    icon: ImageIcon,
+    label: "Media Library",
   },
 
   {
