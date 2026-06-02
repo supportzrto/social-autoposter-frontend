@@ -15,7 +15,7 @@ import {
 import {
     Status,
     Post,
-} from '@/app/constants/mockPosts';
+} from '@/types/post';
 
 import { toast } from 'sonner';
 
@@ -31,19 +31,40 @@ import DeletePostModal
     from './posts/DeletePostModal';
 
 const STATUS_STYLES: Record<Status, string> = {
-    published: 'bg-green-50 text-green-700',
-    scheduled: 'bg-blue-50 text-blue-700',
-    pending: 'bg-amber-50 text-amber-700',
-    failed: 'bg-red-50 text-red-700',
+
+    PENDING:
+        "bg-amber-50 text-amber-700",
+
+    PUBLISHED:
+        "bg-green-50 text-green-700",
+
+    FAILED:
+        "bg-red-50 text-red-700",
+
+    PROCESSING:
+        "bg-blue-50 text-blue-700",
+
+    QUEUED:
+        "bg-purple-50 text-purple-700",
 };
 
 const DOT_STYLES: Record<Status, string> = {
-    published: 'bg-green-500',
-    scheduled: 'bg-blue-500',
-    pending: 'bg-amber-500',
-    failed: 'bg-red-500',
-};
 
+    PENDING:
+        "bg-amber-500",
+
+    PUBLISHED:
+        "bg-green-500",
+
+    FAILED:
+        "bg-red-500",
+
+    PROCESSING:
+        "bg-blue-500",
+
+    QUEUED:
+        "bg-purple-500",
+};
 const PLATFORM_STYLES: Record<string, string> = {
     instagram: 'bg-pink-50 text-pink-700',
     facebook: 'bg-blue-50 text-blue-700',
@@ -335,6 +356,18 @@ export default function PostsTable() {
                             </th>
 
                             <th
+                                className="
+  px-4 py-3
+  text-left
+  text-xs font-medium
+  text-gray-500
+  uppercase
+  "
+                            >
+                                Media
+                            </th>
+
+                            <th
                                 className="text-left px-4 py-3
                 text-xs font-semibold text-gray-400
                 uppercase tracking-wide"
@@ -387,22 +420,61 @@ export default function PostsTable() {
                                         <div className="flex items-center gap-3">
 
                                             <div
-                                                className="w-10 h-10 rounded-lg
-                        bg-gray-100 flex items-center
-                        justify-center shrink-0
-                        border border-gray-200"
+                                                className="
+    w-12 h-12
+    shrink-0
+    rounded-lg
+    overflow-hidden
+    border border-gray-200
+    "
                                             >
 
-                                                {post.type === 'video' ? (
-                                                    <Video
-                                                        size={15}
-                                                        className="text-gray-400"
-                                                    />
+                                                {post.media_urls?.length ? (
+
+                                                    post.media_type === "VIDEO" ? (
+
+                                                        <video
+                                                            className="
+                w-full h-full
+                object-cover
+                "
+                                                        >
+                                                            <source
+                                                                src={post.media_urls[0]}
+                                                            />
+                                                        </video>
+
+                                                    ) : (
+
+                                                        <img
+                                                            src={post.media_urls[0]}
+                                                            alt={post.title}
+                                                            className="
+                w-full h-full
+                object-cover
+                "
+                                                        />
+
+                                                    )
+
                                                 ) : (
-                                                    <Image
-                                                        size={15}
-                                                        className="text-gray-400"
-                                                    />
+
+                                                    <div
+                                                        className="
+            w-full h-full
+            bg-gray-100
+            flex items-center
+            justify-center
+            "
+                                                    >
+
+                                                        <Image
+                                                            size={15}
+                                                            className="text-gray-400"
+                                                        />
+
+                                                    </div>
+
                                                 )}
 
                                             </div>
@@ -420,7 +492,7 @@ export default function PostsTable() {
                                                     className="text-xs
                           text-gray-400 mt-0.5 capitalize"
                                                 >
-                                                    {post.type}
+                                                    {post.media_type}
                                                 </p>
 
                                             </div>
@@ -554,7 +626,7 @@ export default function PostsTable() {
                                                 />
                                             </button>
 
-                                            {post.status === 'failed' && (
+                                            {post.status === 'FAILED' && (
                                                 <button
                                                     onClick={() => {
 
@@ -657,7 +729,7 @@ export default function PostsTable() {
               justify-center border border-gray-200"
                                         >
 
-                                            {post.type === 'video' ? (
+                                            {post.media_type === 'video' ? (
                                                 <Video
                                                     size={15}
                                                     className="text-gray-400"
@@ -684,7 +756,7 @@ export default function PostsTable() {
                                                 className="text-xs text-gray-400
                 capitalize mt-1"
                                             >
-                                                {post.type}
+                                                {post.media_type}
                                             </p>
 
                                         </div>
@@ -797,7 +869,7 @@ export default function PostsTable() {
                                     </button>
 
                                     {/* Retry */}
-                                    {post.status === 'failed' && (
+                                    {post.status === 'FAILED' && (
 
                                         <button
                                             onClick={() => {
