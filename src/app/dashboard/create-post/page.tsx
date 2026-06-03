@@ -11,9 +11,21 @@ export default function CreatePostPage() {
 
   const [scheduleTime, setScheduleTime] = useState("");
 
+  const [platforms, setPlatforms] = useState<string[]>(["INSTAGRAM"]);
+
   const [media, setMedia] = useState<any[]>([]);
 
   const [selectedMedia, setSelectedMedia] = useState<any[]>([]);
+
+  const togglePlatform = (platform: string) => {
+    setPlatforms((prev) => {
+      if (prev.includes(platform)) {
+        return prev.filter((p) => p !== platform);
+      }
+
+      return [...prev, platform];
+    });
+  };
 
   const fetchMedia = async () => {
     const response = await fetch(`${API_URL}/media`, {
@@ -57,6 +69,11 @@ export default function CreatePostPage() {
       return;
     }
 
+    if (platforms.length === 0) {
+      alert("Select at least one platform");
+      return;
+    }
+
     const payload = {
       title,
       caption,
@@ -70,7 +87,7 @@ export default function CreatePostPage() {
             ? "VIDEO"
             : "IMAGE",
 
-      platforms: ["INSTAGRAM","FACEBOOK"],
+      platforms,
 
       schedule_time: new Date(scheduleTime).toISOString(),
 
@@ -155,6 +172,51 @@ export default function CreatePostPage() {
           p-3
           "
         />
+      </div>
+
+      <div className="mt-6">
+        <label
+          className="
+    block text-sm
+    font-medium mb-3
+    "
+        >
+          Platforms
+        </label>
+
+        <div
+          className="
+    flex gap-4
+    "
+        >
+          <label
+            className="
+      flex items-center gap-2
+      cursor-pointer
+      "
+          >
+            <input
+              type="checkbox"
+              checked={platforms.includes("INSTAGRAM")}
+              onChange={() => togglePlatform("INSTAGRAM")}
+            />
+            Instagram
+          </label>
+
+          <label
+            className="
+      flex items-center gap-2
+      cursor-pointer
+      "
+          >
+            <input
+              type="checkbox"
+              checked={platforms.includes("FACEBOOK")}
+              onChange={() => togglePlatform("FACEBOOK")}
+            />
+            Facebook
+          </label>
+        </div>
       </div>
 
       <h2
