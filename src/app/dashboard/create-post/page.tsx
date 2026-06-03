@@ -60,14 +60,24 @@ export default function CreatePostPage() {
     const payload = {
       title,
       caption,
-      media_urls: selectedMedia,
-      media_type: selectedMedia.length > 1 ? "CAROUSEL" : "IMAGE",
+
+      media_urls: selectedMedia.map((item) => item.url),
+
+      media_type:
+        selectedMedia.length > 1
+          ? "CAROUSEL"
+          : selectedMedia[0]?.resource_type === "video"
+            ? "VIDEO"
+            : "IMAGE",
+
       platforms: ["INSTAGRAM"],
 
       schedule_time: new Date(scheduleTime).toISOString(),
 
       status: "PENDING",
     };
+
+    console.log(payload);
 
     console.log("PAYLOAD:", payload);
 
