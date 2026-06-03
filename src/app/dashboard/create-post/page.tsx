@@ -70,7 +70,7 @@ export default function CreatePostPage() {
             ? "VIDEO"
             : "IMAGE",
 
-      platforms: ["INSTAGRAM"],
+      platforms: ["INSTAGRAM","FACEBOOK"],
 
       schedule_time: new Date(scheduleTime).toISOString(),
 
