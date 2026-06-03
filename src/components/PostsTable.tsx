@@ -126,6 +126,29 @@ export default function PostsTable() {
     fetchPosts();
   }, []);
 
+  const retryPost = async (postId: number) => {
+    const API_URL = "https://socailautoposterbackend-production.up.railway.app";
+
+    try {
+      const response = await fetch(`${API_URL}/posts/${postId}/retry`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        toast.error("Failed to retry post");
+
+        return;
+      }
+
+      toast.success("Post queued for retry");
+
+      window.location.reload();
+    } catch {
+      toast.error("Something went wrong");
+    }
+  };
+
   const filteredPosts = posts.filter((post) => {
     const matchesSearch = post.title
       .toLowerCase()
@@ -657,9 +680,41 @@ export default function PostsTable() {
 
                   {/* Delete */}
                   <button
-                    onClick={() => {
-                      setDeletePost(post);
-                      setIsDeleteOpen(true);
+                    onClick={async () => {
+                      const API_URL =
+                        "https://socailautoposterbackend-production.up.railway.app";
+
+                      try {
+                        const response = await fetch(
+                          `${API_URL}/posts/${post.id}/retry`,
+                          {
+                            method: "POST",
+                            credentials: "include",
+                          },
+                        );
+
+                        if (!response.ok) {
+                          toast.error("Failed to retry post");
+
+                          return;
+                        }
+
+                        const updatedPosts = posts.map((item) =>
+                          item.id === post.id
+                            ? {
+                                ...item,
+                                status: "PENDING" as Status,
+                                error_message: null,
+                              }
+                            : item,
+                        );
+
+                        setPosts(updatedPosts);
+
+                        toast.success("Post queued for retry");
+                      } catch {
+                        toast.error("Something went wrong");
+                      }
                     }}
                     className="flex-1 h-10 rounded-xl
             border border-red-200
