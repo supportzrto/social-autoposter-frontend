@@ -13,7 +13,7 @@ export default function SettingsPage() {
           "https://socailautoposterbackend-production.up.railway.app/auth/brands/me",
           {
             credentials: "include",
-          }
+          },
         );
 
         if (!response.ok) {
@@ -43,29 +43,24 @@ export default function SettingsPage() {
   };
 
   const disconnect = async () => {
-
     if (!brand) return;
 
-    const confirmed = window.confirm(
-      "Disconnect Instagram account?"
-    );
+    const confirmed = window.confirm("Disconnect Instagram account?");
 
     if (!confirmed) return;
 
     try {
-
       const response = await fetch(
-        `https://socailautoposterbackend-production.up.railway.app/auth/brands/${brand.id}`,
+        `https://socailautoposterbackend-production.up.railway.app/brands/${brand.id}/disconnect`,
         {
-          method: "DELETE",
+          method: "POST",
           credentials: "include",
-        }
+        },
       );
 
       if (response.ok) {
         setBrand(null);
       }
-
     } catch (error) {
       console.error(error);
     }
