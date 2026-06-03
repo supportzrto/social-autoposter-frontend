@@ -6,11 +6,12 @@ export default function MetaCallbackPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
+    const state = params.get("state");
 
     if (!code) return;
 
     fetch(
-      `https://socailautoposterbackend-production.up.railway.app/auth/meta/callback?code=${code}`
+      `https://socailautoposterbackend-production.up.railway.app/auth/meta/callback?code=${code}&state=${state}`
     )
       .then((res) => res.json())
       .then((data) => {
