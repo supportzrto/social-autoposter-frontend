@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 type Brand = {
   id: number;
@@ -10,88 +10,94 @@ type Brand = {
 };
 
 export default function BrandsPage() {
+  const API_URL = "https://socailautoposterbackend-production.up.railway.app";
 
-  const API_URL =
-    "https://socailautoposterbackend-production.up.railway.app";
+  const [brands, setBrands] = useState<Brand[]>([]);
 
-  const [brands, setBrands] =
-    useState<Brand[]>([]);
-
-  const [name, setName] =
-    useState("");
+  const [name, setName] = useState("");
 
   const fetchBrands = async () => {
-
     try {
+      const response = await fetch(`${API_URL}/brands`, {
+        credentials: "include",
+      });
 
-      const response = await fetch(
-        `${API_URL}/brands`,
-        {
-          credentials: "include"
-        }
-      );
-
-      const data =
-        await response.json();
+      const data = await response.json();
 
       setBrands(data);
-
     } catch (error) {
-
       console.log(error);
-
     }
-
   };
 
   useEffect(() => {
-
     fetchBrands();
-
   }, []);
 
   const createBrand = async () => {
-
     if (!name.trim()) return;
 
     try {
+      const response = await fetch(`${API_URL}/brands`, {
+        method: "POST",
 
-      const response = await fetch(
-        `${API_URL}/brands`,
-        {
-          method: "POST",
+        credentials: "include",
 
-          credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify({
-            name,
-          }),
-        }
-      );
+        body: JSON.stringify({
+          name,
+        }),
+      });
 
       if (!response.ok) return;
 
       setName("");
 
       fetchBrands();
-
     } catch (error) {
-
       console.log(error);
-
     }
   };
 
+  const deleteBrand = async (
+  brandId: number
+) => {
+
+  try {
+
+    const response = await fetch(
+      `${API_URL}/brands/${brandId}`,
+      {
+        method: "DELETE",
+
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+
+      alert(
+        "Failed to delete brand"
+      );
+
+      return;
+    }
+
+    fetchBrands();
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
+
   return (
     <div className="p-6">
-
       <div className="mb-6">
-
         <h1
           className="
           text-2xl font-bold
@@ -107,7 +113,6 @@ export default function BrandsPage() {
         >
           Manage your brands
         </p>
-
       </div>
 
       <div
@@ -119,20 +124,14 @@ export default function BrandsPage() {
         mb-6
         "
       >
-
         <div
           className="
           flex gap-3
           "
         >
-
           <input
             value={name}
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
+            onChange={(e) => setName(e.target.value)}
             placeholder="Brand Name"
             className="
             flex-1
@@ -153,9 +152,7 @@ export default function BrandsPage() {
           >
             Add Brand
           </button>
-
         </div>
-
       </div>
 
       <div
@@ -165,9 +162,7 @@ export default function BrandsPage() {
         border
         "
       >
-
         {brands.map((brand) => (
-
           <div
             key={brand.id}
             className="
@@ -176,25 +171,24 @@ export default function BrandsPage() {
             p-4 border-b
             "
           >
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">{brand.name}</h3>
 
-            <div>
-
-              <h3
+              <button
+                onClick={() => deleteBrand(brand.id)}
                 className="
-                font-semibold
-                "
+    px-3 py-1
+    text-red-600
+    border border-red-200
+    rounded-lg
+    "
               >
-                {brand.name}
-              </h3>
-
+                Delete
+              </button>
             </div>
-
           </div>
-
         ))}
-
       </div>
-
     </div>
   );
 }
