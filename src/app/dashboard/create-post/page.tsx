@@ -15,6 +15,10 @@ export default function CreatePostPage() {
 
   const [media, setMedia] = useState<any[]>([]);
 
+  const [brands, setBrands] = useState<any[]>([]);
+
+  const [brandId, setBrandId] = useState("");
+
   const [selectedMedia, setSelectedMedia] = useState<any[]>([]);
 
   const togglePlatform = (platform: string) => {
@@ -37,8 +41,27 @@ export default function CreatePostPage() {
     setMedia(data);
   };
 
+  const fetchBrands = async () => {
+    try {
+      const response = await fetch(`${API_URL}/brands`, {
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      setBrands(data);
+
+      if (data.length > 0) {
+        setBrandId(String(data[0].id));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchMedia();
+    fetchBrands();
   }, []);
 
   const toggleMedia = (item: any) => {
@@ -74,7 +97,17 @@ export default function CreatePostPage() {
       return;
     }
 
+    if (!brandId) {
+      alert("Select a brand");
+
+      return;
+    }
+
     const payload = {
+
+      brand_id:
+        Number(brandId),
+
       title,
       caption,
 
@@ -137,6 +170,22 @@ export default function CreatePostPage() {
       <h1 className="text-2xl font-bold mb-6">Create Post</h1>
 
       <div className="space-y-4">
+        <select
+          value={brandId}
+          onChange={(e) => setBrandId(e.target.value)}
+          className="
+  w-full
+  border
+  rounded-lg
+  p-3
+  "
+        >
+          {brands.map((brand) => (
+            <option key={brand.id} value={brand.id}>
+              {brand.name}
+            </option>
+          ))}
+        </select>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
