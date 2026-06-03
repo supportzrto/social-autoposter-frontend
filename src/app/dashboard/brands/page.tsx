@@ -293,22 +293,18 @@ export default function BrandsPage() {
           </h3>
 
           {pages.map((page) => (
-            <button
+            <div
               key={page.id}
+              style={{
+                border: "1px solid red",
+                padding: "10px",
+                marginBottom: "10px",
+                cursor: "pointer",
+              }}
               onClick={() => connectPage(page)}
-              className="
-        block
-        w-full
-        text-left
-        p-3
-        border
-        rounded-lg
-        mb-2
-        hover:bg-gray-50
-        "
             >
               {page.name}
-            </button>
+            </div>
           ))}
         </div>
       )}
