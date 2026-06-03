@@ -35,18 +35,24 @@ export default function BrandsPage() {
   };
 
   const loadPages = async (brandId: number) => {
+    console.log("LOAD PAGES CLICKED", brandId);
+
     try {
       const response = await fetch(`${API_URL}/auth/meta/all-pages`, {
         credentials: "include",
       });
 
+      console.log("STATUS:", response.status);
+
       const data = await response.json();
+
+      console.log("DATA:", data);
 
       setPages(data.data || []);
 
       setSelectedBrand(brandId);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
