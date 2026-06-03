@@ -62,38 +62,27 @@ export default function BrandsPage() {
     }
   };
 
-  const deleteBrand = async (
-  brandId: number
-) => {
-
-  try {
-
-    const response = await fetch(
-      `${API_URL}/brands/${brandId}`,
-      {
+  const deleteBrand = async (brandId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/brands/${brandId}`, {
         method: "DELETE",
 
         credentials: "include",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+
+        alert(data.detail || "Failed to delete brand");
+
+        return;
       }
-    );
 
-    if (!response.ok) {
-
-      alert(
-        "Failed to delete brand"
-      );
-
-      return;
+      fetchBrands();
+    } catch (error) {
+      console.log(error);
     }
-
-    fetchBrands();
-
-  } catch (error) {
-
-    console.log(error);
-
-  }
-};
+  };
 
   return (
     <div className="p-6">
