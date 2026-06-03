@@ -14,6 +14,10 @@ export default function BrandsPage() {
 
   const [brands, setBrands] = useState<Brand[]>([]);
 
+  const [pages, setPages] = useState<any[]>([]);
+
+  const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
+
   const [name, setName] = useState("");
 
   const fetchBrands = async () => {
@@ -25,6 +29,63 @@ export default function BrandsPage() {
       const data = await response.json();
 
       setBrands(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const loadPages = async (brandId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/meta/all-pages`, {
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      setPages(data.data || []);
+
+      setSelectedBrand(brandId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const connectPage = async (page: any) => {
+    if (!selectedBrand) return;
+
+    try {
+      const response = await fetch(
+        `${API_URL}/brands/${selectedBrand}/connect-page`,
+        {
+          method: "PUT",
+
+          credentials: "include",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            facebook_page_id: page.id,
+
+            access_token: page.access_token,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        alert("Failed to connect page");
+
+        return;
+      }
+
+      alert("Page connected successfully");
+
+      setPages([]);
+
+      setSelectedBrand(null);
+
+      fetchBrands();
     } catch (error) {
       console.log(error);
     }
@@ -160,8 +221,32 @@ export default function BrandsPage() {
             p-4 border-b
             "
           >
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{brand.name}</h3>
+            <div className="flex items-center gap-2">
+              <div>
+                <h3 className="font-semibold">{brand.name}</h3>
+
+                {brand.facebook_page_id && (
+                  <p
+                    className="
+      text-xs
+      text-green-600
+      "
+                  >
+                    Connected
+                  </p>
+                )}
+              </div>
+
+              <button
+                onClick={() => loadPages(brand.id)}
+                className="
+  px-3 py-1
+  border
+  rounded-lg
+  "
+              >
+                Connect Page
+              </button>
 
               <button
                 onClick={() => deleteBrand(brand.id)}
@@ -178,6 +263,45 @@ export default function BrandsPage() {
           </div>
         ))}
       </div>
+      {pages.length > 0 && (
+        <div
+          className="
+    mt-6
+    bg-white
+    border
+    rounded-xl
+    p-4
+    "
+        >
+          <h3
+            className="
+      font-semibold
+      mb-4
+      "
+          >
+            Select Facebook Page
+          </h3>
+
+          {pages.map((page) => (
+            <button
+              key={page.id}
+              onClick={() => connectPage(page)}
+              className="
+        block
+        w-full
+        text-left
+        p-3
+        border
+        rounded-lg
+        mb-2
+        hover:bg-gray-50
+        "
+            >
+              {page.name}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
