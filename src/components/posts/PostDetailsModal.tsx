@@ -217,8 +217,13 @@ export default function PostDetailsModal({
                 "
               >
                 {new Date(
-                  post.schedule_time
-                ).toLocaleString()}
+  post.schedule_time
+).toLocaleString(
+  "en-IN",
+  {
+    timeZone: "Asia/Kolkata",
+  }
+)}
               </p>
 
             </div>
