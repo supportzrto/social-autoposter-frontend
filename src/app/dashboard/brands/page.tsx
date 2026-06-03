@@ -269,6 +269,10 @@ export default function BrandsPage() {
           </div>
         ))}
       </div>
+      <p>
+        Pages Count:
+        {pages.length}
+      </p>
       {pages.length > 0 && (
         <div
           className="
