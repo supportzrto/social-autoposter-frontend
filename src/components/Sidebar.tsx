@@ -1,8 +1,7 @@
+"use client";
 
-'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   LayoutDashboard,
@@ -14,22 +13,23 @@ import {
   Menu,
   X,
   Image as ImageIcon,
-} from 'lucide-react';
+  Building2,
+} from "lucide-react";
 
-import { clsx } from 'clsx';
-import { useState } from 'react';
+import { clsx } from "clsx";
+import { useState } from "react";
 
 const nav = [
   {
-    href: '/dashboard',
+    href: "/dashboard",
     icon: LayoutDashboard,
-    label: 'Dashboard',
+    label: "Dashboard",
   },
 
   {
-    href: '/dashboard/upload',
+    href: "/dashboard/upload",
     icon: Upload,
-    label: 'Upload Excel',
+    label: "Upload Excel",
   },
 
   {
@@ -39,9 +39,9 @@ const nav = [
   },
 
   {
-    href: '/dashboard/posts',
+    href: "/dashboard/posts",
     icon: CalendarClock,
-    label: 'All Posts',
+    label: "All Posts",
   },
 
   {
@@ -51,9 +51,15 @@ const nav = [
   },
 
   {
-    href: '/dashboard/settings',
+    href: "/dashboard/brands",
+    icon: Building2,
+    label: "Brands",
+  },
+
+  {
+    href: "/dashboard/settings",
     icon: Settings,
-    label: 'Settings',
+    label: "Settings",
   },
 ];
 
@@ -64,7 +70,7 @@ const handleLogout = async () => {
       {
         method: "POST",
         credentials: "include",
-      }
+      },
     );
 
     window.location.href = "/login";
@@ -76,8 +82,7 @@ const handleLogout = async () => {
 export default function Sidebar() {
   const path = usePathname();
 
-  const [mobileOpen, setMobileOpen] =
-    useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <>
@@ -88,48 +93,27 @@ export default function Sidebar() {
         border-gray-100 flex items-center
         justify-between px-4 z-50"
       >
-
         <div className="flex items-center gap-2">
-
           <div
             className="w-8 h-8 bg-indigo-600
             rounded-lg flex items-center
             justify-center"
           >
-
-            <Zap
-              size={15}
-              className="text-white"
-            />
-
+            <Zap size={15} className="text-white" />
           </div>
 
-          <span
-            className="font-bold text-gray-900"
-          >
-            SocialPoster
-          </span>
-
+          <span className="font-bold text-gray-900">SocialPoster</span>
         </div>
 
-        <button
-          onClick={() =>
-            setMobileOpen(true)
-          }
-        >
-
+        <button onClick={() => setMobileOpen(true)}>
           <Menu size={22} />
-
         </button>
-
       </div>
 
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          onClick={() =>
-            setMobileOpen(false)
-          }
+          onClick={() => setMobileOpen(false)}
           className="fixed inset-0
           bg-black/40 z-40 md:hidden"
         />
@@ -150,35 +134,25 @@ export default function Sidebar() {
           transition-transform duration-300
           `,
 
-          mobileOpen
-            ? 'translate-x-0'
-            : '-translate-x-full md:translate-x-0'
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
-
         {/* Logo */}
         <div
           className="h-16 flex items-center
           justify-between px-5
           border-b border-gray-100"
         >
-
           <div
             className="flex items-center
             gap-2.5"
           >
-
             <div
               className="w-8 h-8 bg-indigo-600
               rounded-lg flex items-center
               justify-center"
             >
-
-              <Zap
-                size={15}
-                className="text-white"
-              />
-
+              <Zap size={15} className="text-white" />
             </div>
 
             <span
@@ -187,21 +161,12 @@ export default function Sidebar() {
             >
               SocialPoster
             </span>
-
           </div>
 
           {/* Mobile Close */}
-          <button
-            onClick={() =>
-              setMobileOpen(false)
-            }
-            className="md:hidden"
-          >
-
+          <button onClick={() => setMobileOpen(false)} className="md:hidden">
             <X size={20} />
-
           </button>
-
         </div>
 
         {/* Nav */}
@@ -209,46 +174,33 @@ export default function Sidebar() {
           className="flex-1 py-4 px-3
           flex flex-col gap-1"
         >
-
-          {nav.map(
-            ({
-              href,
-              icon: Icon,
-              label,
-            }) => (
-
-              <Link
-                key={href}
-                href={href}
-                onClick={() =>
-                  setMobileOpen(false)
-                }
-                className={clsx(
-                  `
+          {nav.map(({ href, icon: Icon, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              className={clsx(
+                `
                   flex items-center gap-3
                   px-3 py-2.5 rounded-lg
                   text-sm font-medium
                   transition-colors
                   `,
 
-                  path === href
-                    ? 'bg-indigo-50 text-indigo-700'
-                    : `
+                path === href
+                  ? "bg-indigo-50 text-indigo-700"
+                  : `
                       text-gray-500
                       hover:bg-gray-50
                       hover:text-gray-900
-                    `
-                )}
-              >
+                    `,
+              )}
+            >
+              <Icon size={17} />
 
-                <Icon size={17} />
-
-                {label}
-
-              </Link>
-            )
-          )}
-
+              {label}
+            </Link>
+          ))}
         </nav>
 
         {/* Bottom */}
@@ -266,11 +218,9 @@ export default function Sidebar() {
     transition-colors"
           >
             <LogOut size={17} />
-
             Sign out
           </button>
         </div>
-
       </aside>
     </>
   );
