@@ -10,7 +10,7 @@ export default function SettingsPage() {
     const fetchBrand = async () => {
       try {
         const response = await fetch(
-          "https://socailautoposterbackend-production.up.railway.app/auth/brands/me",
+          "https://social-poster-app.up.railway.app/auth/brands/me",
           {
             credentials: "include",
           },
@@ -39,7 +39,7 @@ export default function SettingsPage() {
 
   const connectInstagram = () => {
     window.location.href =
-      "https://socailautoposterbackend-production.up.railway.app/auth/meta/login";
+      "https://social-poster-app.up.railway.app/auth/meta/login";
   };
 
   const disconnect = async () => {
@@ -51,7 +51,7 @@ export default function SettingsPage() {
 
     try {
       const response = await fetch(
-        `https://socailautoposterbackend-production.up.railway.app/brands/${brand.id}/disconnect`,
+        `https://social-poster-app.up.railway.app/brands/${brand.id}/disconnect`,
         {
           method: "POST",
           credentials: "include",

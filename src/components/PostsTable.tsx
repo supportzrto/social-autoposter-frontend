@@ -99,7 +99,7 @@ export default function PostsTable() {
     const fetchPosts = async () => {
       try {
         const API_URL =
-          "https://socailautoposterbackend-production.up.railway.app";
+          "https://social-poster-app.up.railway.app";
 
         const response = await fetch(`${API_URL}/posts`, {
           credentials: "include",
@@ -127,7 +127,7 @@ export default function PostsTable() {
   }, []);
 
   const retryPost = async (postId: number) => {
-    const API_URL = "https://socailautoposterbackend-production.up.railway.app";
+    const API_URL = "https://social-poster-app.up.railway.app";
 
     try {
       const response = await fetch(`${API_URL}/posts/${postId}/retry`, {
@@ -682,7 +682,7 @@ export default function PostsTable() {
                   <button
                     onClick={async () => {
                       const API_URL =
-                        "https://socailautoposterbackend-production.up.railway.app";
+                        "https://social-poster-app.up.railway.app";
 
                       try {
                         const response = await fetch(

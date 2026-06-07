@@ -25,7 +25,7 @@ export default function DashboardPage() {
     const fetchStats = async () => {
       try {
         const response = await fetch(
-          "https://socailautoposterbackend-production.up.railway.app/posts/stats",
+          "https://social-poster-app.up.railway.app/posts/stats",
           {
             credentials: "include",
           }

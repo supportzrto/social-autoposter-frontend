@@ -23,7 +23,7 @@ export default function RegisterPage() {
 
     try {
       const response = await fetch(
-        "https://socailautoposterbackend-production.up.railway.app/auth/register",
+        "https://social-poster-app.up.railway.app/auth/register",
         {
           method: "POST",
           headers: {

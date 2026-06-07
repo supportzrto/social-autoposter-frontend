@@ -21,7 +21,7 @@ export default function UploadPage() {
 
     const response =
       await fetch(
-        "https://socailautoposterbackend-production.up.railway.app/upload/excel",
+        "https://social-poster-app.up.railway.app/upload/excel",
         {
           method: "POST",
           body: formData,

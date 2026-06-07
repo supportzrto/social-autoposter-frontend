@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export default function CreatePostPage() {
-  const API_URL = "https://socailautoposterbackend-production.up.railway.app";
+  const API_URL = "https://social-poster-app.up.railway.app";
 
   const [title, setTitle] = useState("");
 

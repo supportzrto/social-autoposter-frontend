@@ -15,7 +15,7 @@ export default function AuthGuard({
 
   useEffect(() => {
     fetch(
-      "https://socailautoposterbackend-production.up.railway.app/auth/me",
+      "https://social-poster-app.up.railway.app/auth/me",
       {
         credentials: "include",
       }

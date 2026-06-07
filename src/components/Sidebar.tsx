@@ -66,7 +66,7 @@ const nav = [
 const handleLogout = async () => {
   try {
     await fetch(
-      "https://socailautoposterbackend-production.up.railway.app/auth/logout",
+      "https://social-poster-app.up.railway.app/auth/logout",
       {
         method: "POST",
         credentials: "include",

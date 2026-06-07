@@ -11,7 +11,7 @@ export default function MetaCallbackPage() {
     if (!code) return;
 
     fetch(
-      `https://socailautoposterbackend-production.up.railway.app/auth/meta/callback?code=${code}&state=${state}`
+      `https://social-poster-app.up.railway.app/auth/meta/callback?code=${code}&state=${state}`
     )
       .then((res) => res.json())
       .then((data) => {

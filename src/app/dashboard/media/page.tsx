@@ -13,7 +13,7 @@ export default function MediaPage() {
   const [uploading, setUploading] = useState(false);
 
   const API_URL =
-    "https://socailautoposterbackend-production.up.railway.app";
+    "https://social-poster-app.up.railway.app";
 
   const fetchMedia = async () => {
     try {
