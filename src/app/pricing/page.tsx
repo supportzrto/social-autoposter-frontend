@@ -1,4 +1,8 @@
 import Link from "next/link";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import FaqSection from "@/components/pricing/FaqSection";
+
 
 const plans = [
   {
@@ -41,6 +45,10 @@ const plans = [
 
 export default function PricingPage() {
   return (
+
+    <>
+    <Navbar />
+    
     <div className="bg-gray-50 min-h-screen">
 
       {/* Hero */}
@@ -221,55 +229,7 @@ export default function PricingPage() {
 
       </section>
 
-      {/* FAQ */}
-      <section className="py-24 bg-gray-50">
-
-        <div className="max-w-4xl mx-auto px-6">
-
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold">
-              Frequently Asked Questions
-            </h2>
-          </div>
-
-          <div className="space-y-8">
-
-            <div>
-              <h3 className="text-xl font-semibold">
-                Can I cancel anytime?
-              </h3>
-
-              <p className="text-gray-500 mt-3">
-                Yes. You can cancel at any time.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold">
-                Can I upgrade later?
-              </h3>
-
-              <p className="text-gray-500 mt-3">
-                Absolutely. Upgrade whenever you need.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold">
-                Is there a free plan?
-              </h3>
-
-              <p className="text-gray-500 mt-3">
-                Yes. SocialPoster offers a free plan.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
+      <FaqSection />
       {/* CTA */}
       <section className="py-24 bg-indigo-600">
 
@@ -306,5 +266,7 @@ export default function PricingPage() {
       </section>
 
     </div>
+    <Footer />
+    </>
   );
 }
