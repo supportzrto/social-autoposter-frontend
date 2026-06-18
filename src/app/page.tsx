@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import HeroSection from "@/components/home/HeroSection";
+import FeaturesSection from "@/components/home/FeaturesSection";
+import HowItWorks from "@/components/home/HowItWorks";
+import PricingPreview from "@/components/home/PricingPreview";
+import CTASection from "@/components/home/CTASection";
+
 
 export default function HomePage() {
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -17,13 +26,27 @@ export default function HomePage() {
         if (res.ok) {
           router.push("/dashboard");
         } else {
-          router.push("/login");
+          setLoading(false);
         }
       })
       .catch(() => {
-        router.push("/login");
+        setLoading(false);
       });
   }, []);
 
-  return null;
+  if (loading) {
+    return null;
+  }
+
+  return (
+    <>
+      <Navbar />
+      <HeroSection />
+       <FeaturesSection />
+       <HowItWorks />
+       <PricingPreview />
+       <CTASection />
+       <Footer />
+    </>
+  );
 }
